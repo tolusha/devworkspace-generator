@@ -1,0 +1,35 @@
+#
+# Copyright (c) 2022-2024
+# This program and the accompanying materials are made
+# available under the terms of the Eclipse Public License 2.0
+# which is available at https://www.eclipse.org/legal/epl-2.0/
+#
+# SPDX-License-Identifier: EPL-2.0
+#
+
+name: PR Checks
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  unit-tests:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Install NodeJS
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.18.0
+      - name: Install yarn deps
+        run: yarn install
+      - name: Run eslint
+        run: yarn lint
+      - name: Run unit tests
+        run: yarn test
