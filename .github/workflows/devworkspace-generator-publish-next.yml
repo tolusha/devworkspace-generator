@@ -7,7 +7,7 @@
 # SPDX-License-Identifier: EPL-2.0
 #
 
-name: Release Che DevWorkspace Generator next version
+name: Release next version
 
 on:
   push:
