@@ -25,20 +25,25 @@ jobs:
     name: Create Che Devfile Registry Release
     runs-on: ubuntu-22.04
     steps:
-      -
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '16'
           registry-url: 'https://registry.npmjs.org'
           scope: '@eclipse-che'
-      -
-        name: "Checkout source code"
+      - name: "Checkout source code"
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      -
-        name: Check existing tags
-        if: github.event.inputs.performRelease == 'true'
+      - name: Set up environment
+        run: |
+          sudo apt-get update -y || true
+          sudo apt-get -y -q install hub
+          hub --version
+      - name: Install NodeJS
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.18.0
+      - name: Check existing tags
         run: |
           set +e
           RECREATE_TAGS=${{ github.event.inputs.forceRecreateTags }}
@@ -57,18 +62,21 @@ jobs:
           fi
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
-        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+        run: |
+          echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
       - uses: actions/cache@v4
-        id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
+        id: yarn-cache
         with:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
           key: yarn-${{ hashFiles('yarn.lock') }}
           restore-keys: yarn-
-      - name: publish DevWorkspace Generator
+      - name: Run make-release.sh script
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+          GITHUB_TOKEN: ${{secrets.DEVWORKSPACE_GENERATOR_RELEASE_GITHUB_TOKEN}}
         run: |
-          sed -i -r -e "s/(\"version\": )(\".*\")/\1\"${{ github.event.inputs.version }}\"/" package.json
-          yarn
-          yarn compile
-          npm publish --tag latest
+          git config --global user.name "Anatolii Bazko"
+          git config --global user.email "abazko@redhat.com"
+          
+          ./make-release.sh --version {{ github.event.inputs.version }}
+
