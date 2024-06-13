@@ -19,6 +19,7 @@ usage ()
 }
 
 init() {
+  echo "DEVWORKSPACE_GENERATOR_RELEASE_GITHUB_TOKEN=$DEVWORKSPACE_GENERATOR_RELEASE_GITHUB_TOKEN"
   unset VERSION
 
   while [[ "$#" -gt 0 ]]; do
@@ -117,7 +118,6 @@ updateXBranch() {
     "${COMMIT_MSG}"
 
   tagRelease
-  publishArtifacts
 }
 
 updateMainBrain() {
