@@ -58,6 +58,7 @@ checkoutToXBranch() {
     echo "[INFO] ${X_BRANCH} does not exist. Will be created a new one from main."
     resetChanges "main"
     git push origin main:"${X_BRANCH}"
+    git checkout "${X_BRANCH}"
   fi
 }
 
@@ -66,6 +67,7 @@ checkoutToNextBranch() {
 
   resetChanges main
   git push origin main:"${NEXT_BRANCH}"
+  git checkout "${NEXT_BRANCH}"
 }
 
 publishArtifacts() {
