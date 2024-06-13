@@ -13,6 +13,7 @@ on:
   push:
     branches:
       - main
+      - 7.**.x
 
 jobs:
   publish:
@@ -29,7 +30,7 @@ jobs:
       id: yarn-cache-dir-path
       run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
     - uses: actions/cache@v4
-      id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
+      id: yarn-cache
       with:
         path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
         key: yarn-${{ hashFiles('yarn.lock') }}
